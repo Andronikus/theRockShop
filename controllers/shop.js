@@ -2,35 +2,43 @@ const Product = require("../models/product");
 const Cart = require("../models/cart");
 
 const getProducts = (req, res, next) => {
-  const products = Product.fecthAll((products) => {
-    res.render("shop/product-list", {
-      products,
-      docTitle: "All products",
-      path: "/products",
-    });
-  });
+  Product.fecthAll()
+    .then(([rows, dataFields]) => {
+      res.render("shop/product-list", {
+        products: rows,
+        docTitle: "All products",
+        path: "/products",
+      });
+    })
+    .catch((error) => console.log(error));
 };
 
 const getProduct = (req, res, next) => {
   const { productId } = req.params;
 
-  Product.findById(productId, (product) => {
-    res.render("shop/product-details", {
-      product,
-      docTitle: product.title,
-      path: "/products",
-    });
-  });
+  Product.findById(productId)
+    .then(([rows]) => {
+      const product = rows[0];
+
+      res.render("shop/product-details", {
+        product,
+        docTitle: product.title,
+        path: "/products",
+      });
+    })
+    .catch((error) => console.log(error));
 };
 
 const getIndex = (req, res, next) => {
-  const products = Product.fecthAll((products) => {
-    res.render("shop/index", {
-      products,
-      docTitle: "Shop",
-      path: "/",
-    });
-  });
+  Product.fecthAll()
+    .then(([rows, dataFields]) => {
+      res.render("shop/index", {
+        products: rows,
+        docTitle: "Shop",
+        path: "/",
+      });
+    })
+    .catch((error) => console.log(error));
 };
 
 const getCart = (req, res, next) => {

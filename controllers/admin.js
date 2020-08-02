@@ -1,5 +1,7 @@
 const Product = require("../models/product");
 
+const connectionPool = require("../utils/database");
+
 const getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     docTitle: "Add Product",
@@ -48,18 +50,24 @@ const postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
 
   const product = new Product(null, title, imageUrl, price, description);
-  product.add();
-  res.redirect("/admin/list-products");
+  product
+    .add()
+    .then(() => {
+      res.redirect("/admin/list-products");
+    })
+    .catch((error) => console.log(error));
 };
 
 const getProducts = (req, res, next) => {
-  const products = Product.fecthAll((products) => {
-    res.render("admin/list-products", {
-      products,
-      docTitle: "Product List",
-      path: "/admin/list-products",
-    });
-  });
+  Product.fecthAll()
+    .then(([rows, dataFields]) => {
+      res.render("admin/list-products", {
+        products: rows,
+        docTitle: "Product List",
+        path: "/admin/list-products",
+      });
+    })
+    .catch((error) => console.log(error));
 };
 
 const postDeleteProduct = (req, res, next) => {
