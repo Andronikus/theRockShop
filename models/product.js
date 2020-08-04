@@ -1,37 +1,29 @@
-const Cart = require("./cart");
-const connectionPool = require("../utils/database");
+const Sequelize = require("sequelize");
+const { DataTypes } = require("sequelize");
 
-module.exports = class Product {
-  constructor(id, title, imageUrl, price, description) {
-    this.id = id;
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.price = price;
-    this.description = description;
-  }
+const sequelize = require("../utils/database");
 
-  add() {
-    return connectionPool.execute(
-      "INSERT INTO products(title, price, description, imageUrl) VALUES(?,?,?,?)",
-      [this.title, this.price, this.description, this.imageUrl]
-    );
-  }
-
-  static deleteById(id) {
-    return connectionPool.execute(
-      "DELETE FROM products WHERE products.id = ?",
-      [id]
-    );
-  }
-
-  static fecthAll() {
-    return connectionPool.execute("SELECT * FROM products");
-  }
-
-  static findById(id) {
-    return connectionPool.execute(
-      "SELECT * FROM products WHERE products.id = ?",
-      [id]
-    );
-  }
-};
+const Product = sequelize.define("product", {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: Sequelize.UUIDV4,
+    allowNull: false,
+    primaryKey: true,
+  },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: Sequelize.DECIMAL,
+    allowNull: false,
+  },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+  },
+});
