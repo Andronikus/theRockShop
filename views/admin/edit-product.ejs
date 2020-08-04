@@ -10,22 +10,22 @@
             method="POST">
             <div class="form-control">
                 <label for="title">title</label>
-                <input type="text" name="title" id="title" value="<% if (editMode){ %> <%= product.title%> <% } %>">
+                <input type="text" name="title" id="title" value="<% if (editMode){ %> <%=product.title%> <% } %>">
             </div>
             <div class="form-control">
                 <label for="imageUrl">image url</label>
                 <input type="text" name="imageUrl" id="imageUrl"
-                    value="<% if (editMode){ %> <%= product.imageUrl%> <% } %>">
+                    value="<% if (editMode){ %> <%=product.imageUrl%> <% } %>">
             </div>
             <div class="form-control">
                 <label for="price">price</label>
                 <input type="number" name="price" id="price" step="0.01"
-                    value="<% if (editMode){ %><%= product.price %><% } %>">
+                    value="<% if (editMode){ %><%=product.price%><% } %>">
             </div>
             <div class="form-control">
                 <label for="description">description</label>
                 <textarea name="description" id="description" rows="5"
-                    placeholder="discription here"><% if (editMode){ %><%= product.description%><% } %></textarea>
+                    placeholder="discription here"><% if (editMode){ %><%=product.description%><% } %></textarea>
             </div>
             <% if (editMode){ %>
             <input type="hidden" name="productId" value="<%= product.id %>">

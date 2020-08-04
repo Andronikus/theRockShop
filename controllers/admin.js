@@ -1,7 +1,5 @@
 const Product = require("../models/product");
 
-const connectionPool = require("../utils/database");
-
 const getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     docTitle: "Add Product",
@@ -15,54 +13,59 @@ const getEditProduct = (req, res, next) => {
   const { productId } = req.params;
   const { edit } = req.query;
 
-  console.log(productId, edit);
+  Product.findByPk(productId)
+    .then((product) => {
+      if (!product) {
+        return res.render("/");
+      }
 
-  const product = Product.findById(productId, (product) => {
-    if (!product) {
-      return res.render("/");
-    }
-
-    res.render("admin/edit-product", {
-      docTitle: "Edit Product",
-      path: "/admin/edit-product",
-      editMode: edit,
-      product,
-    });
-  });
+      res.render("admin/edit-product", {
+        docTitle: "Edit Product",
+        path: "/admin/edit-product",
+        editMode: edit,
+        product,
+      });
+    })
+    .catch((error) => console.log(error));
 };
 
 const postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
 
-  const updateProduct = new Product(
-    productId,
-    title,
-    imageUrl,
-    price,
-    description
-  );
-  updateProduct.add();
+  Product.findByPk(productId)
+    .then((product) => {
+      product.title = title;
+      product.price = price;
+      product.imageUrl = imageUrl;
+      product.description = description;
 
-  res.redirect("/admin/list-products");
-};
-
-const postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
-
-  const product = new Product(null, title, imageUrl, price, description);
-  product
-    .add()
+      return product.save();
+    })
     .then(() => {
+      console.log("product updated successfully!");
       res.redirect("/admin/list-products");
     })
     .catch((error) => console.log(error));
 };
 
+const postAddProduct = (req, res, next) => {
+  const { title, imageUrl, price, description } = req.body;
+
+  Product.create({
+    title,
+    price,
+    imageUrl,
+    description,
+  })
+    .then(() => res.redirect("/admin/list-products"))
+    .catch((error) => console.log(error));
+};
+
 const getProducts = (req, res, next) => {
-  Product.fecthAll()
-    .then(([rows, dataFields]) => {
+  Product.findAll()
+    .then((products) => {
       res.render("admin/list-products", {
-        products: rows,
+        products: products,
         docTitle: "Product List",
         path: "/admin/list-products",
       });
@@ -73,9 +76,10 @@ const getProducts = (req, res, next) => {
 const postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
 
-  Product.deleteById(productId);
-
-  res.redirect("/admin/list-products");
+  Product.findByPk(productId)
+    .then((product) => product.destroy())
+    .then(() => res.redirect("/admin/list-products"))
+    .catch((error) => console.log(error));
 };
 
 module.exports = {
