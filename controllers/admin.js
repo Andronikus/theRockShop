@@ -13,8 +13,10 @@ const getEditProduct = (req, res, next) => {
   const { productId } = req.params;
   const { edit } = req.query;
 
-  Product.findByPk(productId)
-    .then((product) => {
+  req.user
+    .getProducts({ where: { id: productId } })
+    .then((products) => {
+      const product = products[0];
       if (!product) {
         return res.render("/");
       }
@@ -51,18 +53,22 @@ const postEditProduct = (req, res, next) => {
 const postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
 
-  Product.create({
-    title,
-    price,
-    imageUrl,
-    description,
-  })
-    .then(() => res.redirect("/admin/list-products"))
+  req.user
+    .createProduct({
+      title,
+      price,
+      imageUrl,
+      description,
+    })
+    .then((product) => {
+      res.redirect("/admin/list-products");
+    })
     .catch((error) => console.log(error));
 };
 
 const getProducts = (req, res, next) => {
-  Product.findAll()
+  req.user
+    .getProducts()
     .then((products) => {
       res.render("admin/list-products", {
         products: products,

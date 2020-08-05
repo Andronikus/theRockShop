@@ -1,11 +1,11 @@
-const { Sequelize } = require("Sequelize");
+const { Sequelize, DataTypes } = require("Sequelize");
 
 const sequelize = require("../utils/database");
 
 const User = sequelize.define("user", {
   id: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
@@ -18,3 +18,5 @@ const User = sequelize.define("user", {
     allowNull: false,
   },
 });
+
+module.exports = User;
