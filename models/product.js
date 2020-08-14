@@ -5,21 +5,38 @@ const getBD = require("../utils/database").getDB;
 const ObjectID = mongodb.ObjectID;
 
 class Product {
-  constructor(title, price, imageUrl, description, id) {
+  constructor(title, price, imageUrl, description, id, userId) {
     this.title = title;
     this.price = price;
     this.imageUrl = imageUrl;
     this.description = description;
     this.id = id ? new ObjectID(id) : null;
+    this.userId = userId;
   }
 
   save() {
     if (!this.id) {
-      return getBD().collection("products").insertOne(this);
+      return getBD().collection("products").insertOne({
+        title: this.title,
+        price: this.price,
+        imageUrl: this.imageUrl,
+        description: this.description,
+        userId: this.userId,
+      });
     } else {
       return getBD()
         .collection("products")
-        .updateOne({ _id: this.id }, { $set: this });
+        .updateOne(
+          { _id: this.id },
+          {
+            $set: {
+              title: this.title,
+              price: this.price,
+              imageUrl: this.imageUrl,
+              description: this.description,
+            },
+          }
+        );
     }
   }
 

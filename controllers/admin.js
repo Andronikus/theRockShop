@@ -38,7 +38,14 @@ const postEditProduct = (req, res, next) => {
 
 const postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(title, price, imageUrl, description);
+  const product = new Product(
+    title,
+    price,
+    imageUrl,
+    description,
+    null,
+    req.user._id
+  );
 
   product
     .save()
