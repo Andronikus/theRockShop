@@ -80,58 +80,64 @@ const postRemoveProductFromCart = (req, res, next) => {
     .catch(logError);
 };
 
-// const postCreateOrder = (req, res, next) => {
-//   let fetchedCart;
+const postCreateOrder = (req, res, next) => {
+  let fetchedCart;
 
-//   req.user
-//     .getCart()
-//     .then((cart) => {
-//       fetchedCart = cart;
-//       return cart.getProducts();
-//     })
-//     .then((products) => {
-//       return req.user
-//         .createOrder()
-//         .then((order) => {
-//           const orderProducts = products.map((product) => {
-//             product.orderItem = {
-//               quantity: product.cartItem.quantity,
-//             };
-//             return product;
-//           });
+  req.user
+    .createOrder()
+    .then((result) => {
+      res.redirect("/orders");
+    })
+    .catch(logError);
+  // req.user
+  //   .getCart()
+  //   .then((cart) => {
+  //     fetchedCart = cart;
+  //     return cart.getProducts();
+  //   })
+  //   .then((products) => {
+  //     return req.user
+  //       .createOrder()
+  //       .then((order) => {
+  //         const orderProducts = products.map((product) => {
+  //           product.orderItem = {
+  //             quantity: product.cartItem.quantity,
+  //           };
+  //           return product;
+  //         });
 
-//           return order.addProducts(orderProducts);
-//         })
-//         .catch((error) => console.log(error));
-//     })
-//     .then(() => {
-//       return fetchedCart.setProducts(null);
-//     })
-//     .then(() => {
-//       res.redirect("/orders");
-//     })
-//     .catch((error) => console.log(error));
-// };
+  //         return order.addProducts(orderProducts);
+  //       })
+  //       .catch((error) => console.log(error));
+  //   })
+  //   .then(() => {
+  //     return fetchedCart.setProducts(null);
+  //   })
+  //   .then(() => {
+  //     res.redirect("/orders");
+  //   })
+  //   .catch((error) => console.log(error));
+};
 
-// const getOrders = (req, res, next) => {
-//   req.user
-//     .getOrders({ include: Product })
-//     .then((orders) => {
-//       res.render("shop/orders.ejs", {
-//         path: "/orders",
-//         docTitle: "Orders",
-//         orders,
-//       });
-//     })
-//     .catch((error) => console.log(error));
-// };
+const getOrders = (req, res, next) => {
+  req.user
+    .getOrders()
+    .then((orders) => {
+      res.render("shop/orders.ejs", {
+        path: "/orders",
+        docTitle: "Orders",
+        orders,
+      });
+    })
+    .catch((error) => console.log(error));
+};
 
-// const getCheckout = (req, res, next) => {
-//   res.render("shop/checkout.ejs", {
-//     path: "/checkout",
-//     docTitle: "Checkout",
-//   });
-// };
+const getCheckout = (req, res, next) => {
+  res.render("shop/checkout.ejs", {
+    path: "/checkout",
+    docTitle: "Checkout",
+  });
+};
 
 module.exports = {
   getProducts,
@@ -141,6 +147,6 @@ module.exports = {
   postAddProductToCart,
   postRemoveProductFromCart,
   // getCheckout,
-  // postCreateOrder,
-  // getOrders,
+  postCreateOrder,
+  getOrders,
 };

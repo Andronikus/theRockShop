@@ -1,9 +1,10 @@
-const { ObjectID } = require("mongodb");
+const { ObjectID, ObjectId } = require("mongodb");
 
 const getDB = require("../utils/database").getDB;
 
 const USER_COLLECTION = "users";
 const PRODUCT_COLLECTION = "products";
+const ORDER_COLLECTION = "orders";
 
 class User {
   constructor(name, email, cart, id) {
@@ -52,7 +53,6 @@ class User {
   }
 
   getCart() {
-    console.log("getCart:: cart", this.cart);
     let cartProducItems = [];
     if (this.cart) {
       cartProducItems = this.cart.items.map((item) => item.productId);
@@ -73,6 +73,40 @@ class User {
             quantity,
           };
         });
+      })
+      .catch((err) => console.log(err));
+  }
+
+  getOrders() {
+    return getDB()
+      .collection(ORDER_COLLECTION)
+      .find({ "user.id": ObjectID(this.id) })
+      .toArray();
+  }
+
+  createOrder() {
+    const dbConnection = getDB();
+
+    return this.getCart()
+      .then((products) => {
+        const order = {
+          user: {
+            id: ObjectId(this.id),
+            name: this.name,
+          },
+          items: products,
+        };
+
+        return dbConnection.collection(ORDER_COLLECTION).insertOne(order);
+      })
+      .then((result) => {
+        this.cart = { items: [] };
+        return dbConnection
+          .collection(USER_COLLECTION)
+          .updateOne(
+            { _id: ObjectID(this.id) },
+            { $set: { cart: { items: [] } } }
+          );
       })
       .catch((err) => console.log(err));
   }
