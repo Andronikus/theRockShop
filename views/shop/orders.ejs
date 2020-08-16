@@ -1,4 +1,5 @@
 <%- include('../includes/head') %>
+<link rel="stylesheet" href="/css/order.css">
 </head>
 
 <body>
@@ -7,7 +8,8 @@
         <% if(orders.length <= 0) {%>
         <h1>No items yet!</h1>
         <%} else {%>
-        <ul>
+        <!--  
+            <ul>
             <% orders.forEach(order => {%>
             <li>OrderID <%=order._id%></li>
             <%if(order.items.length > 0){%>
@@ -19,6 +21,59 @@
             <%}%>
             <%})%>
         </ul>
+        -->
+        <div class="orders-container">
+            <div class="order-container" id="5678954678">
+                <div class="order">
+                    <div class="order__id">id: #5678954678</div>
+                    <div class="order__total-items">10</div>
+                    <div class="order__total-price"><span>€</span>200.45</div>
+                    <button class="btn show" onclick="toogleDetails(event)">more details</button>
+                </div>
+                <div class="order-details hide">
+                    <div class="orders-header">
+                        <div class="item__img">Product</div>
+                        <div class="item__title">Title</div>
+                        <div class="item__quantity">Quantity</div>
+                        <div class="item__price">Price</div>
+                    </div>
+                    <div class="orders-body">
+                        <!-- list of items -->
+                        <div class="items-container">
+                            <div class="item">
+                                <div class="item__img">
+                                    <img src="https://pplware.sapo.pt/wp-content/uploads/2016/05/mongodb-720x405_thumb-1.png"
+                                        alt="item">
+                                </div>
+                                <div class="item__title">Cronicas de Narnia</div>
+                                <div class="item__quantity">8</div>
+                                <div class="item__price"><span>€</span>13.56</div>
+                            </div>
+                            <div class="item">
+                                <div class="item__img">
+                                    <img src="https://pplware.sapo.pt/wp-content/uploads/2016/05/mongodb-720x405_thumb-1.png"
+                                        alt="item">
+                                </div>
+                                <div class="item__title">Cronicas de Narnia</div>
+                                <div class="item__quantity">8</div>
+                                <div class="item__price"><span>€</span>13.56</div>
+                            </div>
+                            <div class="item">
+                                <div class="item__img">
+                                    <img src="https://pplware.sapo.pt/wp-content/uploads/2016/05/mongodb-720x405_thumb-1.png"
+                                        alt="item">
+                                </div>
+                                <div class="item__title">Cronicas de Narnia</div>
+                                <div class="item__quantity">8</div>
+                                <div class="item__price"><span>€</span>13.56</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
         <%}%>
     </main>
     <%- include('../includes/end') %>
