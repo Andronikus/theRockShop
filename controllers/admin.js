@@ -13,7 +13,7 @@ const getEditProduct = (req, res, next) => {
   const { productId } = req.params;
   const { edit } = req.query;
 
-  Product.fetchById(productId)
+  Product.findById(productId)
     .then((product) => {
       res.render("admin/edit-product", {
         docTitle: "Edit Product",
@@ -28,11 +28,16 @@ const getEditProduct = (req, res, next) => {
 const postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
 
-  const product = new Product(title, price, imageUrl, description, productId);
+  Product.findById(productId)
+    .then((product) => {
+      product.title = title;
+      product.imageUrl = imageUrl;
+      product.price = price;
+      product.description = description;
 
-  product
-    .save()
-    .then(() => res.redirect("/admin/list-products"))
+      return product.save();
+    })
+    .then((result) => res.redirect("/admin/list-products"))
     .catch((err) => console.log(err));
 };
 
@@ -44,6 +49,7 @@ const postAddProduct = (req, res, next) => {
     price,
     imageUrl,
     description,
+    userId: req.user,
   });
 
   product
@@ -69,7 +75,7 @@ const getProducts = (req, res, next) => {
 const postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
 
-  Product.deleteById(productId)
+  Product.findByIdAndDelete(productId)
     .then(() => {
       res.redirect("/admin/list-products");
     })
