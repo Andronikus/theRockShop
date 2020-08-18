@@ -1,4 +1,6 @@
 const Product = require("../models/product");
+const Order = require("../models/order");
+
 const logError = require("../utils/log");
 
 const getProducts = (req, res, next) => {
@@ -42,11 +44,22 @@ const getIndex = (req, res, next) => {
 const getCart = (req, res, next) => {
   // get cart associated with user
   req.user
-    .getCart()
-    .then((products) => {
+    .populate({ path: "cart.items.productId", select: "title" })
+    .execPopulate()
+    .then((user) => {
       let warningMessage;
-      if (products.length === 0) {
+      let products = [];
+
+      console.log("getCart", user.cart.items);
+      if (
+        user &&
+        user.cart &&
+        user.cart.items &&
+        user.cart.items.length === 0
+      ) {
         warningMessage = "Cart is empty!";
+      } else {
+        products = user.cart.items;
       }
 
       res.render("shop/cart.ejs", {
@@ -62,13 +75,9 @@ const getCart = (req, res, next) => {
 const postAddProductToCart = (req, res, next) => {
   const { productId } = req.body;
 
-  Product.fetchById(productId)
-    .then((product) => {
-      return req.user.addToCart(product);
-    })
-    .then((result) => {
-      res.redirect("/cart");
-    })
+  req.user
+    .addToCart(productId)
+    .then((result) => res.redirect("/cart"))
     .catch(logError);
 };
 
@@ -76,66 +85,42 @@ const postRemoveProductFromCart = (req, res, next) => {
   const { productId } = req.body;
   req.user
     .deleteProductFromCart(productId)
-    .then((result) => res.redirect("/orders"))
+    .then((result) => res.redirect("/cart"))
     .catch(logError);
 };
 
 const postCreateOrder = (req, res, next) => {
-  let fetchedCart;
-
   req.user
-    .createOrder()
-    .then((result) => {
-      res.redirect("/orders");
-    })
-    .catch(logError);
-  // req.user
-  //   .getCart()
-  //   .then((cart) => {
-  //     fetchedCart = cart;
-  //     return cart.getProducts();
-  //   })
-  //   .then((products) => {
-  //     return req.user
-  //       .createOrder()
-  //       .then((order) => {
-  //         const orderProducts = products.map((product) => {
-  //           product.orderItem = {
-  //             quantity: product.cartItem.quantity,
-  //           };
-  //           return product;
-  //         });
+    .populate("cart.items.productId")
+    .execPopulate()
+    .then((user) => {
+      const products = user.cart.items.map((item) => {
+        return { product: { ...item.productId._doc }, quantity: item.quantity };
+      });
 
-  //         return order.addProducts(orderProducts);
-  //       })
-  //       .catch((error) => console.log(error));
-  //   })
-  //   .then(() => {
-  //     return fetchedCart.setProducts(null);
-  //   })
-  //   .then(() => {
-  //     res.redirect("/orders");
-  //   })
-  //   .catch((error) => console.log(error));
+      const newOrder = new Order({
+        user: {
+          userId: req.user,
+          name: req.user.name,
+        },
+        products,
+      });
+
+      return newOrder.save();
+    })
+    .then((result) => req.user.clearCart())
+    .then(() => res.redirect("/orders"))
+    .catch(logError);
 };
 
 const getOrders = (req, res, next) => {
-  req.user
-    .getOrders()
-    .then((orders) => {
-      res.render("shop/orders.ejs", {
-        path: "/orders",
-        docTitle: "Orders",
-        orders,
-      });
-    })
-    .catch((error) => console.log(error));
-};
-
-const getCheckout = (req, res, next) => {
-  res.render("shop/checkout.ejs", {
-    path: "/checkout",
-    docTitle: "Checkout",
+  Order.find({ "user.userId": req.user }).then((orders) => {
+    console.log("orders", orders);
+    res.render("shop/orders.ejs", {
+      path: "/orders",
+      docTitle: "Orders",
+      orders,
+    });
   });
 };
 
