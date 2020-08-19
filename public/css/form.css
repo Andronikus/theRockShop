@@ -17,10 +17,33 @@
   border: 1px solid #a1a1a1;
   font: inherit;
   border-radius: 2px;
+  padding: 6px 10px;
+}
+
+.form-control label {
+  font-size: 0.8rem;
+  color: #a1a1a1;
 }
 
 .form-control input:focus,
 .form-control textarea:focus,
 .form-control button:focus {
   outline-color: #00695c;
+}
+
+/* Login */
+.form-container {
+  height: calc(100vh - 3.5rem - 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form {
+  width: 400px;
+  border: 1px solid #00695c;
+  border-radius: 5px;
+  padding: 40px 40px;
+  /*box-shadow: 6px 13px 47px 1px rgba(0, 0, 0, 0.35);*/
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
 }

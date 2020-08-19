@@ -115,7 +115,6 @@ const postCreateOrder = (req, res, next) => {
 
 const getOrders = (req, res, next) => {
   Order.find({ "user.userId": req.user }).then((orders) => {
-    console.log("orders", orders);
     res.render("shop/orders.ejs", {
       path: "/orders",
       docTitle: "Orders",
@@ -131,7 +130,6 @@ module.exports = {
   getCart,
   postAddProductToCart,
   postRemoveProductFromCart,
-  // getCheckout,
   postCreateOrder,
   getOrders,
 };

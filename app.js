@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const adminRoute = require("./routes/admin");
 const shopRoute = require("./routes/shop");
+const authRoute = require("./routes/auth");
 
 const errorController = require("./controllers/error");
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/admin", adminRoute);
 app.use(shopRoute);
+app.use(authRoute);
 
 // 404
 app.use(errorController.get404);
