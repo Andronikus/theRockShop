@@ -10,6 +10,7 @@ const getProducts = (req, res, next) => {
         products: products,
         docTitle: "All products",
         path: "/products",
+        isAuthenticated: req.session.isAuthenticated,
       });
     })
     .catch(logError);
@@ -18,12 +19,13 @@ const getProducts = (req, res, next) => {
 const getProduct = (req, res, next) => {
   const { productId } = req.params;
 
-  Product.fetchById(productId)
+  Product.findById(productId)
     .then((product) => {
       res.render("shop/product-details", {
         product,
         docTitle: product.title,
         path: "/products",
+        isAuthenticated: req.session.isAuthenticated,
       });
     })
     .catch(logError);
@@ -36,6 +38,7 @@ const getIndex = (req, res, next) => {
         products: products,
         docTitle: "Shop",
         path: "/",
+        isAuthenticated: req.session.isAuthenticated,
       });
     })
     .catch(logError);
@@ -67,6 +70,7 @@ const getCart = (req, res, next) => {
         docTitle: "Cart",
         products: products,
         warningMessage,
+        isAuthenticated: req.session.isAuthenticated,
       });
     })
     .catch((error) => console.log(error));
@@ -119,6 +123,7 @@ const getOrders = (req, res, next) => {
       path: "/orders",
       docTitle: "Orders",
       orders,
+      isAuthenticated: req.session.isAuthenticated,
     });
   });
 };

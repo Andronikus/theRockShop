@@ -6,6 +6,7 @@ const getAddProduct = (req, res, next) => {
     path: "/admin/add-product",
     docTitle: "Add Product",
     editMode: false,
+    isAuthenticated: req.session.isAuthenticated,
   });
 };
 
@@ -20,6 +21,7 @@ const getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editMode: edit,
         product,
+        isAuthenticated: req.session.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
@@ -67,6 +69,7 @@ const getProducts = (req, res, next) => {
         products: products,
         docTitle: "Product List",
         path: "/admin/list-products",
+        isAuthenticated: req.session.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
