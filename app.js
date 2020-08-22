@@ -64,19 +64,6 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true })
   .then((client) => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const newUser = new User({
-          name: "Andronikus",
-          email: "andronikus@gmail.com",
-          cart: {
-            items: [],
-          },
-        });
-        newUser.save();
-      }
-    });
-
     console.log("connected to db");
     app.listen(3000);
   })
