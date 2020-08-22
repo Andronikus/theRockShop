@@ -11,20 +11,40 @@ module.exports.getLogin = (req, res, next) => {
 };
 
 module.exports.postLogin = (req, res, next) => {
-  User.findById("5f3af4e4eb50a26b8c39ff2f")
-    .then((user) => {
-      req.session.isAuthenticated = true;
-      req.session.user = user;
+  const { email, password } = req.body;
 
-      req.session.save((err) => {
-        if (err) {
-          console.log("Error saving session");
-          return;
-        }
-        res.redirect("/");
-      });
+  User.findOne({ email: email })
+    .then((userDoc) => {
+      if (!userDoc) {
+        console.log(" email/pw not valid!");
+        return res.redirect("/login");
+      }
+
+      bcrypt
+        .compare(password, userDoc.password)
+        .then((isPasswordMatch) => {
+          if (!isPasswordMatch) {
+            return res.redirect("/login");
+          }
+
+          // create session
+          req.session.isAuthenticated = true;
+          req.session.user = userDoc;
+
+          return req.session.save((err) => {
+            if (err) {
+              console.log("Error saving session");
+              return;
+            }
+            res.redirect("/");
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect("/login");
+        });
     })
-    .then((err) => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 module.exports.postLogout = (req, res, next) => {
@@ -49,16 +69,15 @@ module.exports.postSignup = (req, res, next) => {
         return res.redirect("/login");
       }
 
-      return bcrypt.hash(password, 12);
-    })
-    .then((hashedPassword) => {
-      const newUser = new User({
-        email: email,
-        password: hashedPassword,
-        cart: { items: [] },
-      });
+      return bcrypt.hash(password, 12).then((hashedPassword) => {
+        const newUser = new User({
+          email: email,
+          password: hashedPassword,
+          cart: { items: [] },
+        });
 
-      return newUser.save();
+        return newUser.save();
+      });
     })
     .then(() => {
       res.redirect("/login");
