@@ -105,7 +105,7 @@ const postCreateOrder = (req, res, next) => {
       const newOrder = new Order({
         user: {
           userId: req.user,
-          name: req.user.name,
+          email: req.user.email,
         },
         products,
       });

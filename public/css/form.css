@@ -37,6 +37,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-flow: column;
 }
 
 .login-form {
@@ -46,4 +47,21 @@
   padding: 40px 40px;
   /*box-shadow: 6px 13px 47px 1px rgba(0, 0, 0, 0.35);*/
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+.user-message {
+  margin-top: 20px;
+  width: 100%;
+  border: 1px solid #1d1db4;
+  border-radius: 3px;
+  padding: 5px 5px;
+  background: #a2a2da;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.user-message__error {
+  border: 1px solid #da2c2c;
+  background: #c9a5a1;
+  color: #da2c2c;
 }

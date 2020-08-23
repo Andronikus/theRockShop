@@ -3,10 +3,13 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 
 module.exports.getLogin = (req, res, next) => {
+  const flash = req.flash("errorMessage");
+  const errorMessage = flash.length > 0 ? flash[0] : null;
+
   res.render("auth/login", {
     path: "login",
     docTitle: "Login",
-    isAuthenticated: req.session.isAuthenticated,
+    errorMessage: errorMessage,
   });
 };
 
@@ -16,7 +19,8 @@ module.exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((userDoc) => {
       if (!userDoc) {
-        console.log(" email/pw not valid!");
+        console.log("invalid email or password");
+        req.flash("errorMessage", "invalid user or password");
         return res.redirect("/login");
       }
 
@@ -24,6 +28,7 @@ module.exports.postLogin = (req, res, next) => {
         .compare(password, userDoc.password)
         .then((isPasswordMatch) => {
           if (!isPasswordMatch) {
+            req.flash("errorMessage", "invalid email or password");
             return res.redirect("/login");
           }
 
@@ -56,7 +61,10 @@ module.exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "signup",
     docTitle: "SignUp",
-    isAuthenticated: req.session.isAuthenticated,
+    errorMessage:
+      req.flash("errorMessage").length > 0
+        ? req.flash("errorMessage")[0]
+        : null,
   });
 };
 
@@ -66,6 +74,7 @@ module.exports.postSignup = (req, res, next) => {
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
+        req.flash("errorMessage", "user already has taken");
         return res.redirect("/login");
       }
 
@@ -76,11 +85,12 @@ module.exports.postSignup = (req, res, next) => {
           cart: { items: [] },
         });
 
-        return newUser.save();
+        return newUser.save().then(() => {
+          req.flash("errorMessage", "Something went wrong!");
+          res.redirect("/login");
+        });
       });
     })
-    .then(() => {
-      res.redirect("/login");
-    })
+
     .catch((err) => console.log(err));
 };
