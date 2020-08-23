@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
 
 const adminRoute = require("./routes/admin");
 const shopRoute = require("./routes/shop");
@@ -21,6 +22,8 @@ const store = new MongoDBStore({
   uri: MONGO_URI,
   collection: "sessions",
 });
+
+const csrfProtection = csrf();
 
 const app = express();
 
@@ -39,6 +42,13 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isAuthenticated;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 // Temporary (add dummy user to request)
 app.use((req, res, next) => {

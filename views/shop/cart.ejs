@@ -11,15 +11,17 @@
             <li><%= p.productId.title %> (<%= p.quantity %>)</li>
             <form action="/cart/delete-product" method="POST">
                 <input type="hidden" name="productId" value="<%= p.productId._id %>">
+                <input type="hidden" name="_csrf" value="<%=csrfToken%">
                 <button class="btn" type="submit">Delete</button>
             </form>
             <%}) %>
         </ul>
-        <form action="/create-order" method="POST">
-            <button class="btn" type="submit">Order Now!</button>
-        </form>
-        <% } else { %>
-        <h1><%= warningMessage %></h1>
-        <% } %>
+        <form action=" /create-order" method="POST">
+                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                <button class="btn" type="submit">Order Now!</button>
+            </form>
+            <% } else { %>
+            <h1><%= warningMessage %></h1>
+            <% } %>
     </main>
     <%- include('../includes/end') %>
