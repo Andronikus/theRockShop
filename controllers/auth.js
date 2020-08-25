@@ -1,4 +1,14 @@
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+const sendGridTransport = require("nodemailer-sendgrid-transport");
+
+const transporter = nodemailer.createTransport(
+  sendGridTransport({
+    auth: {
+      api_key: process.env.SENDGRID_API_KEY,
+    },
+  })
+);
 
 const User = require("../models/user");
 
@@ -86,11 +96,16 @@ module.exports.postSignup = (req, res, next) => {
         });
 
         return newUser.save().then(() => {
-          req.flash("errorMessage", "Something went wrong!");
           res.redirect("/login");
+          return transporter.sendMail({
+            to: email,
+            from: process.env.MAIL_SENDER,
+            subject: "Please confirm your account",
+            html:
+              '<div><h1>Please confirm your account <a href="http://localhost:3000/login">here</a></h1></div>',
+          });
         });
       });
     })
-
     .catch((err) => console.log(err));
 };

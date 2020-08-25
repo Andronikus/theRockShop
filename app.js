@@ -16,11 +16,8 @@ const errorController = require("./controllers/error");
 
 const User = require("./models/user");
 
-const MONGO_URI =
-  "mongodb+srv://shopman:shopman@shop0.qrybc.mongodb.net/shop?retryWrites=true&w=majority";
-
 const store = new MongoDBStore({
-  uri: MONGO_URI,
+  uri: process.env.MONGO_URI,
   collection: "sessions",
 });
 
@@ -74,7 +71,7 @@ app.use(authRoute);
 app.use(errorController.get404);
 
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true })
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true })
   .then((client) => {
     console.log("connected to db");
     app.listen(3000);
