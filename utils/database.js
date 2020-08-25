@@ -1,9 +1,8 @@
 const MongoClient = require("mongodb").MongoClient;
 
-const uri =
-  "mongodb+srv://shopman:shopman@shop0.qrybc.mongodb.net/shop?retryWrites=true&w=majority";
-
-const client = new MongoClient(uri, { useUnifiedTopology: true });
+const client = new MongoClient(process.env.MONGO_URI, {
+  useUnifiedTopology: true,
+});
 
 let _db;
 
