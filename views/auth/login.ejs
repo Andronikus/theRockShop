@@ -6,23 +6,28 @@
     <%- include('../includes/navigation.ejs') %>
     <main>
         <div class="form-container">
-            <form class="login-form" action="/login" method="POST">
-                <div class="form-control">
-                    <label for="email">email</label>
-                    <input type="email" name="email" id="email" placeholder="youremail@some.com">
+            <div class="login-form">
+                <form action="/login" method="POST">
+                    <div class="form-control">
+                        <label for="email">email</label>
+                        <input type="email" name="email" id="email" placeholder="youremail@some.com">
+                    </div>
+                    <div class="form-control">
+                        <label for="password">password</label>
+                        <input type="password" name="password" id="password" placeholder="your password">
+                    </div>
+                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                    <button class="btn" type="submit">Login</button>
+                    <% if(errorMessage){ %>
+                    <div class="user-message user-message__error">
+                        <%= errorMessage %>
+                    </div>
+                    <%}%>
+                </form>
+                <div class="reset-password">
+                    <a href="/reset-password">not remember password?</a>
                 </div>
-                <div class="form-control">
-                    <label for="password">password</label>
-                    <input type="password" name="password" id="password" placeholder="your password">
-                </div>
-                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
-                <button class="btn" type="submit">Login</button>
-                <% if(errorMessage){ %>
-                <div class="user-message user-message__error">
-                    <%= errorMessage %>
-                </div>
-                <%}%>
-            </form>
+            </div> 
         </div>
        
     </main>

@@ -44,8 +44,7 @@
   width: 400px;
   border: 1px solid #00695c;
   border-radius: 5px;
-  padding: 40px 40px;
-  /*box-shadow: 6px 13px 47px 1px rgba(0, 0, 0, 0.35);*/
+  padding: 40px 40px 10px 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
 }
 
@@ -64,4 +63,13 @@
   border: 1px solid #da2c2c;
   background: #c9a5a1;
   color: #da2c2c;
+}
+
+.reset-password {
+  margin-top: 0.8rem;
+  text-align: center;
+}
+
+.reset-password a {
+  font-size: 0.8rem;
 }

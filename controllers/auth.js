@@ -109,3 +109,14 @@ module.exports.postSignup = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+
+module.exports.getResetPassword = (req, res, next) => {
+  const flash = req.flash("errorMessage");
+  const errorMessage = flash.length > 0 ? flash[0] : null;
+
+  res.render("auth/reset-password", {
+    path: "reset-password",
+    docTitle: "Reset Password",
+    errorMessage: errorMessage,
+  });
+};

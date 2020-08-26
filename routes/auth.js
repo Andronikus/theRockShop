@@ -6,6 +6,7 @@ const route = express.Router();
 
 route.get("/login", auth.getLogin);
 route.get("/signup", auth.getSignup);
+route.get("/reset-password", auth.getResetPassword);
 
 route.post("/login", auth.postLogin);
 route.post("/logout", auth.postLogout);
