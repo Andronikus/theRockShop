@@ -11,5 +11,6 @@ route.get("/reset-password", auth.getResetPassword);
 route.post("/login", auth.postLogin);
 route.post("/logout", auth.postLogout);
 route.post("/signup", auth.postSignup);
+route.post("/reset-password", auth.postResetPassword);
 
 module.exports = route;

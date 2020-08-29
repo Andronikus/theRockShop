@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const sendGridTransport = require("nodemailer-sendgrid-transport");
@@ -118,5 +119,45 @@ module.exports.getResetPassword = (req, res, next) => {
     path: "reset-password",
     docTitle: "Reset Password",
     errorMessage: errorMessage,
+  });
+};
+
+module.exports.postResetPassword = (req, res, next) => {
+  const { email } = req.body;
+
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log("randomBytes error", err);
+      res.redirect("/");
+    }
+
+    const token = buffer.toString("hex");
+
+    User.findOne({ email })
+      .then((user) => {
+        if (!user) {
+          req.flash("errorMessage", "Email not found");
+          req.redirect("/reset-password");
+        }
+
+        user.resetPasswordToken = token;
+        user.resetPasswordTokenExpiryTime = Date.now() + 3600000;
+
+        return user.save();
+      })
+      .then(() => {
+        res.redirect("/reset-password");
+        return transporter.sendMail({
+          to: req.body.email,
+          from: process.env.MAIL_SENDER,
+          subject: "The Rock Shop: time to change your pw",
+          html: `
+              <div>
+                <p>Hello! <a href="http://localhost:3000/reset-password/${token}></a> </p>
+              </div>
+            `,
+        });
+      })
+      .catch((err) => console.log(err));
   });
 };
