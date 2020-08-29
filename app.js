@@ -15,6 +15,8 @@ const authRoute = require("./routes/auth");
 const errorController = require("./controllers/error");
 
 const User = require("./models/user");
+const Product = require("./models/product");
+const product = require("./models/product");
 
 const store = new MongoDBStore({
   uri: process.env.MONGO_URI,
@@ -56,8 +58,8 @@ app.use((req, res, next) => {
   }
 
   User.findById(req.session.user._id)
-    .then((user) => {
-      req.user = user;
+    .then((userDoc) => {
+      req.user = userDoc;
       next();
     })
     .catch((err) => console.log(err));

@@ -30,7 +30,6 @@ module.exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((userDoc) => {
       if (!userDoc) {
-        console.log("invalid email or password");
         req.flash("errorMessage", "invalid user or password");
         return res.redirect("/login");
       }
