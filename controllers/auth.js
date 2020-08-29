@@ -152,12 +152,72 @@ module.exports.postResetPassword = (req, res, next) => {
           from: process.env.MAIL_SENDER,
           subject: "The Rock Shop: time to change your pw",
           html: `
-              <div>
-                <p>Hello! <a href="http://localhost:3000/reset-password/${token}></a> </p>
-              </div>
+                <p>Hello! http://localhost:3000/reset-password/${token} </p>
             `,
         });
       })
       .catch((err) => console.log(err));
   });
+};
+
+module.exports.getNewPassword = (req, res, next) => {
+  const { resetToken } = req.params;
+
+  User.findOne({
+    resetPasswordToken: resetToken,
+    resetPasswordTokenExpiryTime: { $gt: Date.now() },
+  })
+    .then((user) => {
+      if (!user) {
+        req.flash(
+          "errorMessage",
+          "ouch! something went wrong! took too much time reset password?"
+        );
+        return res.redirect("/reset-password");
+      }
+
+      const flash = req.flash("errorMessage");
+      const errorMessage = flash.length > 0 ? flash[0] : null;
+
+      res.render("auth/new-password", {
+        path: "new-password",
+        docTitle: "New password",
+        userId: user._id.toString(),
+        resetToken: resetToken,
+        errorMessage: errorMessage,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+module.exports.postNewPassword = (req, res, next) => {
+  const { newPassword, userId, resetToken } = req.body;
+
+  let user;
+
+  User.findOne({
+    _id: userId,
+    resetPasswordToken: resetToken,
+    resetPasswordTokenExpiryTime: { $gt: Date.now() },
+  })
+    .then((result) => {
+      if (!result) {
+        req.flash("errorMessage", "Ops! Something went wrong!");
+        return res.redirect("/reset-password");
+      }
+
+      user = result;
+      return bcrypt.hash(newPassword, 12);
+    })
+    .then((hashedPassword) => {
+      user.password = hashedPassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordTokenExpiryTime = undefined;
+
+      return user.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+    })
+    .catch((err) => console.log(err));
 };
