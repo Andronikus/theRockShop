@@ -76,45 +76,55 @@ module.exports.getSignup = (req, res, next) => {
       req.flash("errorMessage").length > 0
         ? req.flash("errorMessage")[0]
         : null,
+    oldInputInfo: {
+      email: "",
+      password: "",
+    },
+    validationErrors: {},
   });
 };
 
 module.exports.postSignup = (req, res, next) => {
-  const { email, password, confirmpassword } = req.body;
+  const { email, password } = req.body;
 
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
+    const validationErrors = errors.array().reduce((errObj, e) => {
+      const newError = { ...errObj };
+      newError[e.param] = e.param;
+      return newError;
+    }, {});
+
     return res.status(422).render("auth/signup", {
       path: "signup",
       docTitle: "SignUp",
       errorMessage: errors.array()[0].msg,
+      oldInputInfo: {
+        email,
+        password,
+      },
+      validationErrors,
     });
   }
 
-  User.findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        req.flash("errorMessage", "user already has taken");
-        return res.redirect("/login");
-      }
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const newUser = new User({
+        email: email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
 
-      return bcrypt.hash(password, 12).then((hashedPassword) => {
-        const newUser = new User({
-          email: email,
-          password: hashedPassword,
-          cart: { items: [] },
-        });
-
-        return newUser.save().then(() => {
-          res.redirect("/login");
-          return transporter.sendMail({
-            to: email,
-            from: process.env.MAIL_SENDER,
-            subject: "Please confirm your account",
-            html:
-              '<div><h1>Please confirm your account <a href="http://localhost:3000/login">here</a></h1></div>',
-          });
+      return newUser.save().then(() => {
+        res.redirect("/login");
+        return transporter.sendMail({
+          to: email,
+          from: process.env.MAIL_SENDER,
+          subject: "Please confirm your account",
+          html:
+            '<div><h1>Please confirm your account <a href="http://localhost:3000/login">here</a></h1></div>',
         });
       });
     })

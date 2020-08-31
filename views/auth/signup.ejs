@@ -9,15 +9,18 @@
             <form class="login-form" action="/signup" method="POST" novalidate>
                 <div class="form-control">
                     <label for="email">email</label>
-                    <input type="email" name="email" id="email" placeholder="youremail@some.com">
+                    <input class="<%= validationErrors.email ? 'invalid': ''%>" type="email" name="email" id="email"
+                        placeholder="youremail@some.com" value=<%=oldInputInfo.email%>>
                 </div>
                 <div class="form-control">
                     <label for="password">password</label>
-                    <input type="password" name="password" id="password" placeholder="your password">
+                    <input class="<%= validationErrors.password ? 'invalid': ''%>" type="password" name="password"
+                        id="password" placeholder="your password" value=<%=oldInputInfo.password%>>
                 </div>
                 <div class="form-control">
                     <label for="confirmPassword">confirm password</label>
-                    <input type="password" name="confirmPassword" id="confirmPassword" placeholder="confirm password">
+                    <input class="<%= validationErrors.confirmPassword ? 'invalid': ''%>" type="password"
+                        name="confirmPassword" id="confirmPassword" placeholder="confirm password">
                 </div>
                 <button class="btn" type="submit">Signup</button>
                 <input type="hidden" name="_csrf" value="<%=csrfToken%>">
