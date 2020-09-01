@@ -10,28 +10,35 @@
             method="POST">
             <div class="form-control">
                 <label for="title">title</label>
-                <input type="text" name="title" id="title" value="<%if (editMode){%><%=product.title%><% } %>">
+                <input class="<%=validationErrors.title ? 'invalid': '' %>" type="text" name="title" id="title"
+                    value="<%if (editMode || hasErrors){%><%=product.title%><% } %>">
             </div>
             <div class="form-control">
                 <label for="imageUrl">image url</label>
-                <input type="text" name="imageUrl" id="imageUrl"
-                    value="<% if (editMode){ %><%=product.imageUrl%><% } %>">
+                <input class="<%=validationErrors.imageUrl ? 'invalid': '' %>" type="text" name="imageUrl" id="imageUrl"
+                    value="<% if (editMode || hasErrors ){ %><%=product.imageUrl%><% } %>">
             </div>
             <div class="form-control">
                 <label for="price">price</label>
-                <input type="number" name="price" id="price" step="0.01"
-                    value="<% if (editMode){ %><%=product.price%><% } %>">
+                <input class="<%=validationErrors.price ? 'invalid': '' %>" type="number" name="price" id="price"
+                    step="0.01" value="<% if (editMode || hasErrors){ %><%=product.price%><% } %>">
             </div>
             <div class="form-control">
                 <label for="description">description</label>
-                <textarea name="description" id="description" rows="5"
-                    placeholder="discription here"><% if (editMode){ %><%=product.description%><% } %></textarea>
+                <textarea class="<%=validationErrors.description ? 'invalid': '' %>" name="description" id="description"
+                    rows="5"
+                    placeholder="discription here"><% if (editMode || hasErrors){ %><%=product.description%><% } %></textarea>
             </div>
             <% if (editMode){ %>
             <input type="hidden" name="productId" value="<%= product._id %>">
             <% } %>
             <input type="hidden" name="_csrf" value="<%=csrfToken%>">
             <button class="btn" type="submit"><% if (editMode){ %>Save Product<% } else { %>Add Product<% }%></button>
+            <% if(errorMessage){ %>
+            <div class="user-message user-message__error">
+                <%= errorMessage %>
+            </div>
+            <%}%>
         </form>
     </main>
     <%- include('../includes/end.ejs') %>

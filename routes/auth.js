@@ -1,5 +1,5 @@
 const express = require("express");
-const { check, body } = require("express-validator/check");
+const { check, body } = require("express-validator");
 
 const auth = require("../controllers/auth");
 const User = require("../models/user");
@@ -9,7 +9,17 @@ const route = express.Router();
 route.get("/login", auth.getLogin);
 route.post(
   "/login",
-  [body("mail").isEmail().withMessage("Not a valid email!")],
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Not a valid email!")
+      .trim()
+      .normalizeEmail(),
+    body("password", "Please, enter a valid password")
+      .isLength({ min: 5 })
+      .isAlphanumeric()
+      .trim(),
+  ],
   auth.postLogin
 );
 
@@ -30,20 +40,25 @@ route.post(
           }
         });
       })
-      .bail(),
+      .bail()
+      .normalizeEmail()
+      .trim(),
     check("password")
       .isLength({ min: 5 })
       .withMessage("Password should have at least 5 chars!")
       .bail()
       .isAlphanumeric()
       .withMessage("Password should be alphanumeric!")
-      .bail(),
-    check("confirmPassword").custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("confirmation password does not match!");
-      }
-      return true;
-    }),
+      .bail()
+      .trim(),
+    check("confirmPassword")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("confirmation password does not match!");
+        }
+        return true;
+      }),
   ],
   auth.postSignup
 );

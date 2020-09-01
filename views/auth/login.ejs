@@ -7,14 +7,17 @@
     <main>
         <div class="form-container">
             <div class="login-form">
-                <form action="/login" method="POST">
+                <form action="/login" method="POST" novalidate>
                     <div class="form-control">
                         <label for="email">email</label>
-                        <input type="email" name="email" id="email" placeholder="youremail@some.com">
+                        <input class="<%=validationErrors.email ? 'invalid' : ''%>" type="email" name="email" id="email"
+                            placeholder="youremail@some.com" value="<%=oldInputInfo.email%>""
+                        >
                     </div>
-                    <div class="form-control">
+                    <div class=" form-control">
                         <label for="password">password</label>
-                        <input type="password" name="password" id="password" placeholder="your password">
+                        <input class="<%=validationErrors.password ? 'invalid' : ''%>" type="password" name="password"
+                            id="password" placeholder="your password">
                     </div>
                     <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                     <button class="btn" type="submit">Login</button>

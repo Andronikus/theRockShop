@@ -4,6 +4,8 @@ const nodemailer = require("nodemailer");
 const sendGridTransport = require("nodemailer-sendgrid-transport");
 const { validationResult } = require("express-validator");
 
+const { getValidationErrorObj } = require("../utils/validation");
+
 const transporter = nodemailer.createTransport(
   sendGridTransport({
     auth: {
@@ -22,25 +24,57 @@ module.exports.getLogin = (req, res, next) => {
     path: "login",
     docTitle: "Login",
     errorMessage: errorMessage,
+    oldInputInfo: {},
+    validationErrors: {},
   });
 };
 
 module.exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
 
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const validationErrors = getValidationErrorObj(errors);
+
+    return res.status(422).render("auth/login", {
+      path: "login",
+      docTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+      oldInputInfo: {
+        email,
+      },
+      validationErrors,
+    });
+  }
+
   User.findOne({ email: email })
     .then((userDoc) => {
       if (!userDoc) {
-        req.flash("errorMessage", "invalid user or password");
-        return res.redirect("/login");
+        return res.status(422).render("auth/login", {
+          path: "login",
+          docTitle: "Login",
+          errorMessage: "invalid email or password",
+          oldInputInfo: {
+            email,
+          },
+          validationErrors: {},
+        });
       }
 
       bcrypt
         .compare(password, userDoc.password)
         .then((isPasswordMatch) => {
           if (!isPasswordMatch) {
-            req.flash("errorMessage", "invalid email or password");
-            return res.redirect("/login");
+            return res.status(422).render("auth/login", {
+              path: "login",
+              docTitle: "Login",
+              errorMessage: "invalid email or password",
+              oldInputInfo: {
+                email,
+              },
+              validationErrors: {},
+            });
           }
 
           // create session
@@ -57,7 +91,15 @@ module.exports.postLogin = (req, res, next) => {
         })
         .catch((err) => {
           console.log(err);
-          res.redirect("/login");
+          return res.status(500).render("auth/login", {
+            path: "login",
+            docTitle: "Login",
+            errorMessage: "Something went wrong!",
+            oldInputInfo: {
+              email,
+            },
+            validationErrors: {},
+          });
         });
     })
     .catch((err) => console.log(err));
@@ -90,11 +132,7 @@ module.exports.postSignup = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    const validationErrors = errors.array().reduce((errObj, e) => {
-      const newError = { ...errObj };
-      newError[e.param] = e.param;
-      return newError;
-    }, {});
+    const validationErrors = getValidationErrorObj(errors);
 
     return res.status(422).render("auth/signup", {
       path: "signup",

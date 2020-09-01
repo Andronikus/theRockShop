@@ -74,6 +74,7 @@
   font-size: 0.8rem;
 }
 
-.form-control input.invalid {
+.form-control input.invalid,
+.form-control textarea.invalid {
   border: 1px solid red;
 }
