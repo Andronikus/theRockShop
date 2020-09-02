@@ -62,7 +62,10 @@ app.use((req, res, next) => {
       req.user = userDoc;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 });
 
 app.use("/admin", adminRoute);
@@ -71,6 +74,14 @@ app.use(authRoute);
 
 // 404
 app.use(errorController.get404);
+
+// error handling middleware
+app.use((error, req, res, next) => {
+  res.render("500", {
+    docTitle: "Error!",
+    path: "/505",
+  });
+});
 
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true })

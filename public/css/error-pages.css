@@ -1,0 +1,36 @@
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: -1;
+  background: #ebe7e7;
+  color: #00695c;
+}
+
+.main-text span {
+  font-size: 8rem;
+  margin: 0 10px;
+}
+
+.main-text h3 {
+  letter-spacing: 0.1rem;
+}
+
+.secondary-text p {
+  font-weight: 800;
+  letter-spacing: 0.1rem;
+}
+
+.link-text {
+  margin-top: 20px;
+}
+
+.link-text a {
+  text-decoration: none;
+}
