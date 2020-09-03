@@ -102,7 +102,11 @@ module.exports.postLogin = (req, res, next) => {
           });
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 module.exports.postLogout = (req, res, next) => {
@@ -166,7 +170,11 @@ module.exports.postSignup = (req, res, next) => {
         });
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 module.exports.getResetPassword = (req, res, next) => {
@@ -214,7 +222,11 @@ module.exports.postResetPassword = (req, res, next) => {
             `,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        const error = new Error(err);
+        error.statusCode = 500;
+        next(error);
+      });
   });
 };
 
@@ -245,7 +257,11 @@ module.exports.getNewPassword = (req, res, next) => {
         errorMessage: errorMessage,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 module.exports.postNewPassword = (req, res, next) => {
@@ -277,5 +293,9 @@ module.exports.postNewPassword = (req, res, next) => {
     .then((result) => {
       res.redirect("/login");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };

@@ -13,7 +13,11 @@ const getProducts = (req, res, next) => {
         isAuthenticated: req.session.isAuthenticated,
       });
     })
-    .catch(logError);
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const getProduct = (req, res, next) => {
@@ -28,7 +32,12 @@ const getProduct = (req, res, next) => {
         isAuthenticated: req.session.isAuthenticated,
       });
     })
-    .catch(logError);
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const getIndex = (req, res, next) => {
@@ -41,7 +50,11 @@ const getIndex = (req, res, next) => {
         isAuthenticated: req.session.isAuthenticated,
       });
     })
-    .catch(logError);
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const getCart = (req, res, next) => {
@@ -52,8 +65,6 @@ const getCart = (req, res, next) => {
     .then((user) => {
       let warningMessage;
       let products = [];
-
-      console.log("getCart", user.cart.items);
       if (
         user &&
         user.cart &&
@@ -73,7 +84,11 @@ const getCart = (req, res, next) => {
         isAuthenticated: req.session.isAuthenticated,
       });
     })
-    .catch((error) => console.log(error));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const postAddProductToCart = (req, res, next) => {
@@ -82,7 +97,11 @@ const postAddProductToCart = (req, res, next) => {
   req.user
     .addToCart(productId)
     .then((result) => res.redirect("/cart"))
-    .catch(logError);
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const postRemoveProductFromCart = (req, res, next) => {
@@ -90,7 +109,11 @@ const postRemoveProductFromCart = (req, res, next) => {
   req.user
     .deleteProductFromCart(productId)
     .then((result) => res.redirect("/cart"))
-    .catch(logError);
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const postCreateOrder = (req, res, next) => {
@@ -114,7 +137,11 @@ const postCreateOrder = (req, res, next) => {
     })
     .then((result) => req.user.clearCart())
     .then(() => res.redirect("/orders"))
-    .catch(logError);
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const getOrders = (req, res, next) => {

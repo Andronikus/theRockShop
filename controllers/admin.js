@@ -55,7 +55,11 @@ const postAddProduct = (req, res, next) => {
     .then((result) => {
       res.redirect("/admin/list-products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const getEditProduct = (req, res, next) => {
@@ -75,7 +79,11 @@ const getEditProduct = (req, res, next) => {
         isAuthenticated: req.session.isAuthenticated,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const postEditProduct = (req, res, next) => {
@@ -115,7 +123,11 @@ const postEditProduct = (req, res, next) => {
       return product.save();
     })
     .then((result) => res.redirect("/admin/list-products"))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const getProducts = (req, res, next) => {
@@ -128,7 +140,11 @@ const getProducts = (req, res, next) => {
         isAuthenticated: req.session.isAuthenticated,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 const postDeleteProduct = (req, res, next) => {
@@ -138,7 +154,11 @@ const postDeleteProduct = (req, res, next) => {
     .then(() => {
       res.redirect("/admin/list-products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.statusCode = 500;
+      next(error);
+    });
 };
 
 module.exports = {
