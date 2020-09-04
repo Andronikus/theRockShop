@@ -16,7 +16,7 @@ route.post(
       .isLength({ min: 3 })
       .trim()
       .withMessage("Title should have at least 3 characters!"),
-    body("imageUrl").isURL().withMessage("Image URL is not a valid url!"),
+    // body("imageUrl").isURL().withMessage("Image URL is not a valid url!"),
     body("price")
       .isFloat({ gt: 0.0 })
       .withMessage("Price should be greater than 0"),

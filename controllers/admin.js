@@ -19,6 +19,10 @@ const getAddProduct = (req, res, next) => {
 
 const postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
+  const imageFile = req.file;
+
+  console.log(imageFile);
+
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
