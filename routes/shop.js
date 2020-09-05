@@ -17,5 +17,6 @@ route.post(
 );
 route.post("/create-order", isAuthenticated, shopController.postCreateOrder);
 route.get("/orders", isAuthenticated, shopController.getOrders);
+route.get("/orders/:orderId", isAuthenticated, shopController.getInvoice);
 
 module.exports = route;

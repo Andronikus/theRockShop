@@ -73,7 +73,6 @@ app.use(flash());
 
 app.use((req, res, next) => {
   const csrf = req.csrfToken();
-  console.log("csrf: ", csrf);
 
   res.locals.isAuthenticated = req.session.isAuthenticated;
   res.locals.csrfToken = csrf;

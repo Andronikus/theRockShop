@@ -13,7 +13,7 @@
             <div class="order-container" id="<%=order._id%>">
 
                 <div class="order">
-                    <div class="order__id">id: <%=order._id%></div>
+                    <div class="order__id">id: <%=order._id%> (<a href="/orders/<%=order._id%>">invoice</a>)</div>
                     <div class="order__total-items"><%=10%></div>
                     <div class="order__total-price"><span>€</span><%=200.89%></div>
                     <button class="btn show" onclick="toogleDetails(event)">more details</button>
