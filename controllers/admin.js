@@ -1,7 +1,9 @@
 const { validationResult } = require("express-validator");
+const path = require("path");
 
 const Product = require("../models/product");
 const { getValidationErrorObj } = require("../utils/validation");
+const rootDir = require("../utils/path");
 
 const getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
@@ -18,7 +20,7 @@ const getAddProduct = (req, res, next) => {
 };
 
 const postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
+  const { title, price, description } = req.body;
   const imageFile = req.file;
 
   console.log(imageFile);
@@ -42,14 +44,30 @@ const postAddProduct = (req, res, next) => {
         price,
         description,
       },
-      isAuthenticated: req.session.isAuthenticated,
+    });
+  }
+
+  if (!imageFile) {
+    return res.status(402).render("admin/edit-product", {
+      docTitle: "Add Product",
+      path: "/admin/add-product",
+      docTitle: "Add Product",
+      editMode: false,
+      hasErrors: true,
+      errorMessage: "Please submit a valid product image",
+      validationErrors: {},
+      product: {
+        title,
+        price,
+        description,
+      },
     });
   }
 
   const product = new Product({
     title,
     price,
-    imageUrl,
+    imageUrl: path.join("images", imageFile.filename),
     description,
     userId: req.user,
   });
@@ -91,7 +109,8 @@ const getEditProduct = (req, res, next) => {
 };
 
 const postEditProduct = (req, res, next) => {
-  const { productId, title, imageUrl, price, description } = req.body;
+  const { productId, title, price, description } = req.body;
+  const imageFile = req.file;
 
   const errors = validationResult(req);
 
@@ -108,7 +127,6 @@ const postEditProduct = (req, res, next) => {
       validationErrors: validationErrors,
       product: {
         title,
-        imageUrl,
         price,
         description,
         _id: productId,
@@ -120,7 +138,10 @@ const postEditProduct = (req, res, next) => {
   Product.findById(productId)
     .then((product) => {
       product.title = title;
-      product.imageUrl = imageUrl;
+
+      if (imageFile) {
+        product.imageUrl = path.join("images", imageFile.filename);
+      }
       product.price = price;
       product.description = description;
 

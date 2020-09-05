@@ -24,12 +24,25 @@ const store = new MongoDBStore({
 
 const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads");
+    cb(null, path.join(__dirname, "images"));
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + "-" + file.originalname);
+    cb(null, new Date().getUTCMilliseconds() + "-" + file.originalname);
+    console.log("filename");
   },
 });
+
+const uploadFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 
 const csrfProtection = csrf();
 
@@ -39,10 +52,6 @@ app.set("views", "views");
 app.set("view engine", "ejs");
 
 // Middleware
-app.use(multer({ storage: diskStorage }).single("image"));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "public")));
-
 app.use(
   session({
     secret: "keyboard cat",
@@ -51,12 +60,23 @@ app.use(
     store: store,
   })
 );
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  multer({ storage: diskStorage, fileFilter: uploadFilter }).single("image")
+);
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
+
 app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
+  const csrf = req.csrfToken();
+  console.log("csrf: ", csrf);
+
   res.locals.isAuthenticated = req.session.isAuthenticated;
-  res.locals.csrfToken = req.csrfToken();
+  res.locals.csrfToken = csrf;
   next();
 });
 
@@ -86,9 +106,11 @@ app.use(errorController.get404);
 
 // error handling middleware
 app.use((error, req, res, next) => {
+  console.log(error);
   res.render("500", {
     docTitle: "Error!",
     path: "/505",
+    isAuthenticated: req.session.isAuthenticated,
   });
 });
 
