@@ -171,19 +171,19 @@ const getInvoice = (req, res, next) => {
       if (orderDoc.user.userId.toString() !== req.user._id.toString()) {
         return res.status(403).redirect("/orders");
       }
+      const readStream = fs.createReadStream(
+        path.join("data/invoices", invoiceName)
+      );
 
-      fs.readFile(path.join("data/invoices", invoiceName), (err, data) => {
-        if (err) {
-          return next(err);
-        }
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader(
-          "Content-Disposition",
-          'inline; filename="' + invoiceName + '"'
-        );
-        res.setHeader("Content-Length", data.byteLength.toString());
-        res.send(data);
-      });
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        'inline; filename="' + invoiceName + '"'
+      );
+      // every chunck of file is forward to the res writable stream
+      // advantage for big files, only a chunck of memory will be allocated and not memory for all file before send
+      // the response!
+      readStream.pipe(res);
     })
     .catch((err) => next(err));
 };
