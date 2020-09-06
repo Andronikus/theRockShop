@@ -4,6 +4,7 @@ const path = require("path");
 const Product = require("../models/product");
 const { getValidationErrorObj } = require("../utils/validation");
 const rootDir = require("../utils/path");
+const { deleteFile } = require("../utils/file");
 
 const getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
@@ -140,6 +141,7 @@ const postEditProduct = (req, res, next) => {
       product.title = title;
 
       if (imageFile) {
+        deleteFile(product.imageUrl);
         product.imageUrl = path.join("images", imageFile.filename);
       }
       product.price = price;
@@ -175,7 +177,13 @@ const getProducts = (req, res, next) => {
 const postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
 
-  Product.findByIdAndDelete(productId)
+  Product.findById(productId)
+    .then((productDoc) => {
+      if (productDoc) {
+        deleteFile(productDoc.imageUrl);
+      }
+      return Product.findByIdAndDelete(productId);
+    })
     .then(() => {
       res.redirect("/admin/list-products");
     })
