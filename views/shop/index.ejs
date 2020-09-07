@@ -6,8 +6,8 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
     <main>
+        <% if(products.length > 0){ %>
         <div class="grid">
-            <% if(products.length > 0){ %>
             <% for(product of products){%>
             <article class="card product-item">
                 <header class="card__header">
@@ -27,9 +27,13 @@
                 </div>
             </article>
             <% }%>
-            <% } else{%>
-            <h1>No products yet</h1>
-            <% } %>
         </div>
+        <section class="pagination">
+            <a href="?page=1">1</a>
+            <a href="?page=2">2</a>
+        </section>
+        <% } else{%>
+        <h1>No products yet</h1>
+        <% } %>
     </main>
     <% include('../includes/end.ejs') %>

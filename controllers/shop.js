@@ -4,7 +4,7 @@ const path = require("path");
 const Product = require("../models/product");
 const Order = require("../models/order");
 
-const logError = require("../utils/log");
+const NBR_PRODUTS_PER_PAGE = 4;
 
 const getProducts = (req, res, next) => {
   Product.find()
@@ -44,7 +44,10 @@ const getProduct = (req, res, next) => {
 };
 
 const getIndex = (req, res, next) => {
+  const page = req.query.page;
   Product.find()
+    .skip((page - 1) * NBR_PRODUTS_PER_PAGE)
+    .limit(NBR_PRODUTS_PER_PAGE)
     .then((products) => {
       res.render("shop/index", {
         products: products,
