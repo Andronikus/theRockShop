@@ -44,15 +44,31 @@ const getProduct = (req, res, next) => {
 };
 
 const getIndex = (req, res, next) => {
-  const page = req.query.page;
-  Product.find()
-    .skip((page - 1) * NBR_PRODUTS_PER_PAGE)
-    .limit(NBR_PRODUTS_PER_PAGE)
+  const page = +req.query.page || 1;
+
+  let nbrProducts;
+
+  Product.countDocuments()
+    .then((nrbDocuments) => {
+      nbrProducts = nrbDocuments;
+
+      return Product.find()
+        .skip((page - 1) * NBR_PRODUTS_PER_PAGE)
+        .limit(NBR_PRODUTS_PER_PAGE);
+    })
     .then((products) => {
+      const nbrTotalPages = Math.ceil(nbrProducts / NBR_PRODUTS_PER_PAGE);
+
       res.render("shop/index", {
         products: products,
         docTitle: "Shop",
         path: "/",
+        hasPreviousPage: page - 1 > 1,
+        previousPage: page - 1,
+        hasNextPage: page + 1 < nbrTotalPages,
+        nextPage: page + 1,
+        currentPage: page,
+        lastPage: nbrTotalPages,
         isAuthenticated: req.session.isAuthenticated,
       });
     })
