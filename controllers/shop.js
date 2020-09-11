@@ -48,7 +48,8 @@ const getIndex = (req, res, next) => {
 
   let nbrProducts;
 
-  Product.countDocuments()
+  Product.find()
+    .countDocuments()
     .then((nrbDocuments) => {
       nbrProducts = nrbDocuments;
 

@@ -174,23 +174,26 @@ const getProducts = (req, res, next) => {
     });
 };
 
-const postDeleteProduct = (req, res, next) => {
-  const { productId } = req.body;
+const deleteProduct = (req, res, next) => {
+  const { productId } = req.params;
 
   Product.findById(productId)
     .then((productDoc) => {
       if (productDoc) {
         deleteFile(productDoc.imageUrl);
       }
-      return Product.findByIdAndDelete(productId);
+      // return Product.findByIdAndDelete(productId);
+      return Promise.resolve("Removed");
     })
     .then(() => {
-      res.redirect("/admin/list-products");
+      res.status(200).json({
+        message: "Product removed successfully",
+      });
     })
     .catch((err) => {
-      const error = new Error(err);
-      error.statusCode = 500;
-      next(error);
+      res.status(500).json({
+        message: "Product remove failed!",
+      });
     });
 };
 
@@ -200,5 +203,5 @@ module.exports = {
   postEditProduct,
   postAddProduct,
   getProducts,
-  postDeleteProduct,
+  deleteProduct,
 };

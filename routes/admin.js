@@ -55,10 +55,10 @@ route.post(
   adminController.postEditProduct
 );
 
-route.post(
-  "/delete-product",
+route.delete(
+  "/product/:productId",
   isAuthenticated,
-  adminController.postDeleteProduct
+  adminController.deleteProduct
 );
 
 route.get("/list-products", isAuthenticated, adminController.getProducts);
